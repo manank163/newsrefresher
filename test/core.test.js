@@ -13,6 +13,8 @@ const GOOGLE_RSS = `<?xml version="1.0"?><rss><channel>
 <source url="https://www.livemint.com">Mint</source></item>
 <item><title><![CDATA[Cricket: India win the series - ESPN]]></title>
 <link>https://news.google.com/rss/articles/def</link><pubDate>${now}</pubDate></item>
+<item><title>Top 2 stocks to buy or sell for short-term: Cyient - Mint</title>
+<link>https://news.google.com/rss/articles/tip</link><pubDate>${now}</pubDate></item>
 <item><title>Old deal: Foo buys Bar - Reuters</title>
 <link>https://news.google.com/rss/articles/old</link><pubDate>Mon, 01 Jan 2024 00:00:00 GMT</pubDate></item>
 </channel></rss>`;
@@ -26,7 +28,7 @@ const BING_RSS = `<rss xmlns:News="https://www.bing.com/news/search?q=x&amp;form
 
 test('parses RSS items incl. CDATA, entities and source', () => {
   const items = parseFeed(GOOGLE_RSS);
-  assert.equal(items.length, 3);
+  assert.equal(items.length, 4);
   assert.equal(items[0].source, 'Mint');
   assert.equal(items[1].title, 'Cricket: India win the series - ESPN');
 });
@@ -71,6 +73,8 @@ test('extracts parties', () => {
   assert.deepEqual([d.acquirer, d.target], ['Meridian Partners', 'Solace Energy']);
   d = extractDeal('Ledgerly raises $35 million in Series B funding led by Beacon Ventures');
   assert.deepEqual([d.acquirer, d.target, d.round], ['Beacon Ventures', 'Ledgerly', 'Series B']);
+  d = extractDeal('TalentX to acquire 80% of Tokyo recruiter Agent Cube');
+  assert.equal(d.target, 'Tokyo recruiter Agent Cube');
   d = extractDeal('Evergreen Equity leads buyout of Crestline Packaging');
   assert.deepEqual([d.type, d.acquirer, d.target], ['Buyout', 'Evergreen Equity', 'Crestline Packaging']);
 });
