@@ -1,6 +1,14 @@
 {
   "outputDirectory": "public",
   "functions": {
-    "api/*.js": { "maxDuration": 30 }
-  }
+    "api/*.js": {
+      "maxDuration": 60
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/agent",
+      "schedule": "45 0 * * *"
+    }
+  ]
 }

@@ -8,9 +8,10 @@ import { extname, join, normalize } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import feed from './api/feed.js';
 import config from './api/config.js';
+import agent from './api/agent.js';
 
 const root = join(fileURLToPath(new URL('.', import.meta.url)), 'public');
-const routes = { '/api/feed': feed, '/api/config': config };
+const routes = { '/api/feed': feed, '/api/config': config, '/api/agent': agent };
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.json': 'application/json' };
 

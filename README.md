@@ -44,6 +44,29 @@ Colors use an IMAP-style navy and blue palette. They're all defined as tokens at
 
 API responses are edge-cached for 10 minutes (`s-maxage=600`), so any number of users only hits the news sources a few times an hour.
 
+## Brave Search agent
+
+A scheduled agent runs Brave News searches and merges the results into every tab, alongside Google News, Bing and RSS.
+
+- **What it searches:** 9 queries per run: M&A, PE, VC and IPO; your default tracked sectors (two per query); your default competitor and watchlist names.
+- **When it runs:** once a day by Vercel Cron (`vercel.json`, 00:45 UTC ≈ 06:15 IST; Vercel's free Hobby plan allows daily crons only). It also runs in the background whenever someone uses the portal and the last run is older than `AGENT_INTERVAL_MIN` (default 480 = 8 hours).
+- **Where results live:** a rolling 7-day store in Vercel Blob (`agent/<region>.json`), shared by everyone who uses the portal.
+- **Budget:** at most 3 runs a day × 9 queries ≈ 810 queries a month, which fits Brave's free allowance. Lower `AGENT_INTERVAL_MIN` if you're on a paid Brave plan.
+
+Environment variables (Vercel → Project → Settings → Environment Variables):
+
+| Variable | Required | Purpose |
+| --- | --- | --- |
+| `BRAVE_API_KEY` | yes, to enable the agent | Brave Search API subscription token (https://api-dashboard.search.brave.com) |
+| `BLOB_READ_WRITE_TOKEN` | yes on Vercel | Added automatically when a Blob store is connected to the project |
+| `CRON_SECRET` | yes | Protects `/api/agent`. Vercel Cron sends it automatically |
+| `AGENT_INTERVAL_MIN` | no | Minimum minutes between runs (default 480) |
+| `AGENT_REGIONS` | no | Comma-separated regions to search (default `IN`) |
+
+Endpoints:
+- `GET /api/agent?status=1`: last run, story count and any errors. Public, no secrets.
+- `GET /api/agent` with `Authorization: Bearer $CRON_SECRET` (or `?secret=`): run the agent now.
+
 ## How it works
 
 ```

@@ -7,6 +7,13 @@
 import { REGIONS, SECTORS, TABS, WINDOWS } from '../lib/config.js';
 import { buildFeed } from '../lib/aggregate.js';
 import { buildDemoFeed } from '../lib/demo.js';
+import { agentEnabled, agentRegions, agentStatus, readAgentState, refreshIfStale } from '../lib/agent.js';
+
+// Lets the agent refresh after the response is sent (no-op outside Vercel).
+async function inBackground(promise) {
+  promise.catch(err => console.error('agent refresh failed:', err));
+  try { (await import('@vercel/functions')).waitUntil(promise); } catch { /* local dev: just let it run */ }
+}
 
 const list = (v, sep) => (v ? v.split(sep).map(s => s.trim()).filter(Boolean) : []);
 
@@ -43,8 +50,11 @@ export default async function handler(req, res) {
   if (error) return send(res, 400, { error });
   const demo = process.env.DEMO_MODE === '1' || url.searchParams.get('demo') === '1';
   try {
-    const feed = demo ? await buildDemoFeed(params) : await buildFeed(params);
-    send(res, 200, { ...feed, region: params.region, window: params.window }, demo ? 0 : 600);
+    const useAgent = !demo && agentEnabled() && agentRegions().includes(params.region);
+    const feed = demo ? await buildDemoFeed(params) : await buildFeed({ ...params, includeAgent: useAgent });
+    const agent = useAgent ? agentStatus(await readAgentState(params.region)) : { enabled: false };
+    send(res, 200, { ...feed, agent, region: params.region, window: params.window }, demo ? 0 : 600);
+    if (useAgent) await inBackground(refreshIfStale(params.region));
   } catch (err) {
     send(res, 500, { error: String(err?.message ?? err) });
   }

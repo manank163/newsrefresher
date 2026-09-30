@@ -105,6 +105,7 @@ async function getFeed(p, { force = false } = {}) {
     feedCache.set(key, { at: Date.now(), data });
     lastError = null;
     if (data.demo) $('#demoBanner').hidden = false;
+    if (data.agent?.enabled) showAgent(data.agent);
     return data;
   } catch (err) {
     feedCache.set(key, { at: hit?.at ?? 0, data: hit?.data });
@@ -125,6 +126,15 @@ function cachedTab(tab) {
 }
 
 // ---------- shell ----------
+function showAgent(agent) {
+  const el = $('#agentLine');
+  el.hidden = false;
+  el.textContent = agent.updatedAt
+    ? `Brave agent · ${agent.stories} stories · updated ${rel(agent.updatedAt)}`
+    : 'Brave agent · first search running…';
+  el.title = agent.lastRun?.errors?.length ? `Last run errors: ${agent.lastRun.errors.map(e => e.error).join('; ')}` : '';
+}
+
 function renderNav() {
   $('#nav').innerHTML = NAV.map(n => n.group
     ? `<div class="nav-group">${esc(n.group)}</div>`
