@@ -1,0 +1,13 @@
+{
+  "name": "newsrefresher",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Deal Pulse: a live M&A / PE / VC news portal that aggregates Google News, Bing News and RSS feeds.",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "dev": "node server.js",
+    "demo": "DEMO_MODE=1 node server.js",
+    "test": "node --test test/*.test.js"
+  }
+}
