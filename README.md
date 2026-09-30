@@ -31,7 +31,11 @@ npm run demo    # fictitious demo data, no internet needed
 npm test        # unit tests
 ```
 
-You can also append `?demo=1` to any URL to preview with demo data.
+You can also append `?demo=1` to any URL to preview with demo data, or run `npm run preview` to build a single self-contained `preview.html` (demo data baked in) that opens without a server.
+
+## Theme
+
+Colors use an IMAP-style navy and blue palette. They're all defined as tokens at the top of `public/styles.css` (`--brand`, `--primary`, `--accent`, …), so swapping in exact brand hex codes is a one-place change.
 
 ## Deploy (Vercel)
 

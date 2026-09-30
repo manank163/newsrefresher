@@ -71,6 +71,8 @@ test('extracts parties', () => {
   assert.deepEqual([d.acquirer, d.target], ['Meridian Partners', 'Solace Energy']);
   d = extractDeal('Ledgerly raises $35 million in Series B funding led by Beacon Ventures');
   assert.deepEqual([d.acquirer, d.target, d.round], ['Beacon Ventures', 'Ledgerly', 'Series B']);
+  d = extractDeal('Evergreen Equity leads buyout of Crestline Packaging');
+  assert.deepEqual([d.type, d.acquirer, d.target], ['Buyout', 'Evergreen Equity', 'Crestline Packaging']);
 });
 
 test('buildFeed filters irrelevant/old stories, dedupes across sources and tags sectors', async () => {

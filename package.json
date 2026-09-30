@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "node server.js",
     "demo": "DEMO_MODE=1 node server.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "preview": "node scripts/build-preview.mjs preview.html"
   }
 }
